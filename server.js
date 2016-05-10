@@ -1,6 +1,6 @@
 var express = require('express');
 var bodyParser =require('body-parser');
-
+var _ = require('underscore');
 
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -20,28 +20,16 @@ app.get('/todos', function(req,res){
 app.get('/todos/:id', function(req,res){
     //res.send('Asking for todo with id of: '+ req.params.id);
     var toDoId = parseInt(req.params.id,10);
-    var stringToSend;
-    console.log(toDoId);
-    // for(var i=0; i<todos.length; i++){
-    // 	console.log(todos[i]);
-    // 	if (todos[i].id=== toDoId){
-    //         stringToSend=todos[i];
-    // 	}
-    // }
-
-    // if (typeof stringToSend === 'undefined'){
-    // 	res.status(404).send();
-    // } else
-    // {
-    // 	res.json(stringToSend);
-    // }
+    var stringToSend = _.findWhere(todos,{id:toDoId});
+ //    console.log(toDoId);
+    
  
-	//res.json(todos[req.params.id-1]);
-	 todos.forEach(function (todo){
-	 	if (todo.id === toDoId){
-	 		stringToSend=todo;
-	 	}
-	 });
+	// //res.json(todos[req.params.id-1]);
+	//  todos.forEach(function (todo){
+	//  	if (todo.id === toDoId){
+	//  		stringToSend=todo;
+	//  	}
+	//  });
 
 	 if (stringToSend){ //(typeof stringToSend === 'undefined'){
     	res.json(stringToSend);
@@ -50,9 +38,17 @@ app.get('/todos/:id', function(req,res){
     	res.status(404).send();
     }
 });
+
 //POST /todos no ID at the end
 app.post('/todos', function(req,res){
     var body = req.body;
+    body = _.pick(body, 'description', 'completed');
+
+    if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length ===0 ){
+    	return res.status(404).send();
+    }
+    body.description = body.description.trim();
+
     body.id =  todoNextId++;
   
     todos.push(body);
