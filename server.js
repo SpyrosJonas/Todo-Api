@@ -58,6 +58,21 @@ app.post('/todos', function(req,res){
 
 });
 
+//DELETE /todos/id
+app.delete('/todos/:id', function(req,res){
+	var matchedTodo = _.findWhere(todos, {id: parseInt(req.params.id,10)});
+
+	 if (matchedTodo){ //(typeof stringToSend === 'undefined'){
+    	
+    	todos = _.without(todos, matchedTodo);
+    	res.json(matchedTodo);
+    } else
+    {
+    	res.status(404).json({"error":"Unabale to find tod with that id"});
+    }
+	
+})
+
 app.listen(PORT, function (){
 	console.log('Express listening at port: '+ PORT);
 })
