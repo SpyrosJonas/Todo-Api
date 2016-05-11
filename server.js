@@ -12,8 +12,25 @@ app.use(bodyParser.json());
 app.get('/', function (req,res){
 	res.send('Todo API Root');
 });
-//Get
+//Get /todos?completed=true
 app.get('/todos', function(req,res){
+   var queryParams = req.query;	
+   var filteredToDos = todos;
+   var theParam;
+   if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true'){
+   	  //filteredToDos = _.where(filteredToDos, {completed: true})
+   	  theParam = {completed: true};
+   }else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false'){
+   	  //filteredToDos = _.where(filteredToDos, {completed: false});
+   	  theParam ={completed: false}
+   }
+   //if has propery && completed === 'true'
+   //  filteredTodos = _.where(filteredToDos, ?)
+   //else if has prop ^ completed is 'false'
+   filteredToDos = _.where(filteredToDos, theParam);
+   res.json(filteredToDos);
+
+
    res.json(todos);
 });
 
